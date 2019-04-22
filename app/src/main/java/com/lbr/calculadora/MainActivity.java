@@ -6,9 +6,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.lbr.calculadora.com.lbr.calculadora.utils.CalculateUtils;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity {
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
             Button btn = (Button) v;
             switch (btn.getId()){
                 case R.id.btn_result:
-                    calculate();
+                    final TextView txtResult = findViewById(R.id.txtResult);
+                    txtResult.setText(calculate());
                     break;
                 default:
                     concatExpression(btn.getText());
@@ -67,7 +71,38 @@ public class MainActivity extends AppCompatActivity {
         txtExpression.setText(txtExpression.getText().toString().concat(numberOrOperation.toString()));
     }
 
-    private void calculate(){
+    private StringBuilder calculate(){
+        CalculateUtils c = new CalculateUtils();
+        final TextView txtExpression = findViewById(R.id.txtExpression);
+        StringBuilder expression = new StringBuilder(txtExpression.getText());
 
+        //Multiplication
+        Pattern pattern = Pattern.compile("\\*");
+        Matcher matcher = pattern.matcher(expression);
+        while (matcher.find()){
+            expression = c.manipulateExpression(expression, "*");
+        }
+
+        //Division
+        pattern = Pattern.compile("/");
+        matcher = pattern.matcher(expression);
+        while (matcher.find()){
+            expression = c.manipulateExpression(expression, "/");
+        }
+
+        //Addition
+        pattern = Pattern.compile("\\+");
+        matcher = pattern.matcher(expression);
+        while (matcher.find()){
+            expression = c.manipulateExpression(expression, "+");
+        }
+
+        //Subtraction
+        pattern = Pattern.compile("-");
+        matcher = pattern.matcher(expression);
+        while (matcher.find()){
+            expression = c.manipulateExpression(expression, "-");
+        }
+        return expression;
     }
 }
