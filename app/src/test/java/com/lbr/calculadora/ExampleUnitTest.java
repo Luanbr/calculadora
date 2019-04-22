@@ -4,6 +4,9 @@ import com.lbr.calculadora.com.lbr.calculadora.utils.CalculateUtils;
 
 import org.junit.Test;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static org.junit.Assert.*;
 
 /**
@@ -19,8 +22,18 @@ public class ExampleUnitTest {
 
     @Test
     public void  manipulateMultiplicationExpression_test(){
-        Boolean f = ".".matches("[0-9] | (\\.)");
+        StringBuilder expression = new StringBuilder("5*6*10*3");
+        StringBuilder result = new StringBuilder();
+        Pattern pattern = Pattern.compile("\\*");
+        Matcher matcher = pattern.matcher(expression.toString());
         CalculateUtils c = new CalculateUtils();
-       StringBuilder t =  c.manipulateMultiplicationExpression(new StringBuilder("2+53*12/10+2-5*3"), "*");
+        while (matcher.find()){
+            expression = c.manipulateExpression(expression, "*");
+        }
+        Boolean test = "9".matches("\\*");
+//        CalculateUtils c = new CalculateUtils();
+       StringBuilder t =  c.manipulateExpression(new StringBuilder("2+53.5*12.3/10+2-5*3"), "*");
+       t =  c.manipulateExpression(t, "*");
+        t =  c.manipulateExpression(t, "+");
     }
 }

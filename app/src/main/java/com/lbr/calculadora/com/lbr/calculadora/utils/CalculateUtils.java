@@ -11,8 +11,12 @@ public class CalculateUtils {
 
     public static final int ZERO = 0;
     public static final String MULTIPLICATION = "*";
+    public static final String DIVISION = "/";
+    public static final String ADDITION = "+";
+    public static final String SUBTRACTION = "-";
 
-    public StringBuilder manipulateMultiplicationExpression(StringBuilder expression, String operation){
+
+    public StringBuilder manipulateExpression(StringBuilder expression, String operation){
         int indexOperation = expression.indexOf(operation);
 
         Model firstNumber = new Model();
@@ -28,7 +32,7 @@ public class CalculateUtils {
             }
 
             //If char is a number
-            if(String.valueOf(expression.charAt(indexOperation-i)).matches("[0-9] | [\\.]")){
+            if(String.valueOf(expression.charAt(indexOperation-i)).matches("[0-9\\.]")){
                 firstNumber.getNumberStr().insert(ZERO, String.valueOf(expression.charAt(indexOperation-i)));
                 firstNumber.setIndex(indexOperation-i);
             }else{
@@ -40,14 +44,14 @@ public class CalculateUtils {
         //find second number
         for (int i = 1; i <= expression.length(); i++){
             //if indexOperation + 1 major than String length, then second number was found
-            if((indexOperation+i) > expression.length()){
+            if((indexOperation+i) >= expression.length()){
                 secondNumber.setNumber(new Double(secondNumber.getNumberStr().toString()));
                 secondNumber.setIndex(indexOperation+(i-1));
                 break;
             }
 
             //If char is a number
-            if(String.valueOf(expression.charAt(indexOperation+i)).matches("[0-9] | \\.")){
+            if(String.valueOf(expression.charAt(indexOperation+i)).matches("[0-9\\.]")){
                 secondNumber.getNumberStr().append(String.valueOf(expression.charAt(indexOperation+i)));
                 secondNumber.setIndex(indexOperation+i);
             }else{
@@ -70,10 +74,17 @@ public class CalculateUtils {
             case MULTIPLICATION:
                 result = firstNumber * secondNumber;
                 break;
+            case DIVISION:
+                result = firstNumber / secondNumber;
+                break;
+            case ADDITION:
+                result = firstNumber + secondNumber;
+                break;
+            case SUBTRACTION:
+                result = firstNumber - secondNumber;
+                break;
         }
 
         return result;
     }
-
-
 }
