@@ -21,4 +21,7 @@
     <string name="cosine">cos</string>
     <string name="sine">sin</string>
     <string name="tangent">tan</string>
+    <string name="enviar">Enviar</string>
+    <string name="clean">C</string>
+    <string name="square_root">√</string>
 </resources>
