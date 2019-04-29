@@ -117,7 +117,7 @@
                 android:id="@+id/btn_elevate"
                 android:layout_width="65dp"
                 android:layout_height="wrap_content"
-                android:text="xy" />
+                android:text="@string/elevate" />
         </TableRow>
 
         <!--One -> Factorial -->

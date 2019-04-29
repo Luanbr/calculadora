@@ -1,7 +1,5 @@
 package com.lbr.calculadora.com.lbr.calculadora.utils;
 
-import android.util.Log;
-
 import com.lbr.calculadora.com.lbr.calculadora.model.Model;
 
 /***
@@ -14,13 +12,41 @@ public class CalculateUtils {
     public static final String DIVISION = "/";
     public static final String ADDITION = "+";
     public static final String SUBTRACTION = "-";
-
+    public static final String POWER = "^";
+    public static final String COSINE = "cos";
+    public static final String TANGENT = "tan";
+    public static final String SINE = "sin";
+    public static final String SQRT = "√";
 
     public StringBuilder manipulateExpression(StringBuilder expression, String operation){
-        int indexOperation = expression.indexOf(operation);
 
+        Model firstNumber = findFirstNumber(expression, operation);
+        Model secondNumber = findSecondNumber(expression, operation);
+
+        Double result = calculate(operation, firstNumber.getNumber(), secondNumber.getNumber());
+
+        expression.delete(firstNumber.getIndex(), secondNumber.getIndex() == expression.length() ? secondNumber.getIndex() : (secondNumber.getIndex() + 1));
+        expression.insert(firstNumber.getIndex(), String.valueOf(result));
+
+        return expression;
+    }
+
+    public StringBuilder manipulateExpressionOperationBeforeNumber(StringBuilder expression, String operation){
+
+        Model number = findNumOperationBeforeNumber(expression, operation);
+
+        Double result = calculate(operation, number.getNumber(), null);
+
+        expression.delete(number.getIndexOperation(), number.getIndex() == expression.length() ? number.getIndex() : (number.getIndex() + 1));
+        expression.insert(number.getIndexOperation(), String.valueOf(result));
+
+        return expression;
+    }
+
+    public static Model findFirstNumber(StringBuilder expression, String operation) {
+        int indexOperation = expression.indexOf(operation);
+        int lastIndexOperation = indexOperation + operation.length();
         Model firstNumber = new Model();
-        Model secondNumber = new Model();
 
         //find first number
         for (int i = 1; i <= expression.length(); i++){
@@ -41,6 +67,16 @@ public class CalculateUtils {
             }
         }
 
+        firstNumber.setIndexOperation(indexOperation);
+        firstNumber.setLastIndexOperation(lastIndexOperation);
+
+        return firstNumber;
+    }
+
+    public static Model findSecondNumber(StringBuilder expression, String operation) {
+        int indexOperation = expression.indexOf(operation);
+        Model secondNumber = new Model();
+
         //find second number
         for (int i = 1; i <= expression.length(); i++){
             //if indexOperation + 1 major than String length, then second number was found
@@ -59,13 +95,40 @@ public class CalculateUtils {
                 break;
             }
         }
+        secondNumber.setIndexOperation(indexOperation);
 
-        Double result = calculate(operation, firstNumber.getNumber(), secondNumber.getNumber());
+        return secondNumber;
+    }
 
-        expression.delete(firstNumber.getIndex(), secondNumber.getIndex() == expression.length() ? secondNumber.getIndex() : (secondNumber.getIndex() + 1));
-        expression.insert(firstNumber.getIndex(), String.valueOf(result));
+    public static Model findNumOperationBeforeNumber(StringBuilder expression, String operation) {
+        int indexOperation = expression.indexOf(operation);
+//        int lastIndexOperation = indexOperation + operation.length();
+        int lastIndexOperation = indexOperation + operation.length() - 1;
 
-        return expression;
+        Model number = new Model();
+
+        //find  number
+        for (int i = 1; i <= expression.length(); i++){
+            //if lastIndexOperation + 1 major than String length, then number was found
+            if((lastIndexOperation+i) >= expression.length()){
+                number.setNumber(new Double(number.getNumberStr().toString()));
+                number.setIndex(lastIndexOperation+(i-1));
+                break;
+            }
+
+            //If char is a number
+            if(String.valueOf(expression.charAt(lastIndexOperation+i)).matches("[0-9\\.]")){
+                number.getNumberStr().append(String.valueOf(expression.charAt(lastIndexOperation+i)));
+                number.setIndex(lastIndexOperation+i);
+            }else{
+                number.setNumber(new Double(number.getNumberStr().toString()));
+                break;
+            }
+        }
+        number.setIndexOperation(indexOperation);
+        number.setLastIndexOperation(lastIndexOperation);
+
+        return number;
     }
 
     public Double calculate(String operation,Double firstNumber, Double secondNumber) {
@@ -82,6 +145,18 @@ public class CalculateUtils {
                 break;
             case SUBTRACTION:
                 result = firstNumber - secondNumber;
+                break;
+            case POWER:
+                result = Math.pow(firstNumber, secondNumber);
+                break;
+            case COSINE:
+                result = Math.cos(Math.toRadians(firstNumber));
+                break;
+            case SINE:
+                result = Math.sin(Math.toRadians(firstNumber));
+                break;
+            case TANGENT:
+                result = Math.tan(Math.toRadians(firstNumber));
                 break;
         }
 

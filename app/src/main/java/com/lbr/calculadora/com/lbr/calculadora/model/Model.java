@@ -4,6 +4,8 @@ public class Model {
     private Double number;
     private StringBuilder numberStr;
     private Integer index;
+    private Integer indexOperation;
+    private Integer lastIndexOperation;
 
     public Model(){
         this.numberStr = new StringBuilder();
@@ -31,5 +33,21 @@ public class Model {
 
     public void setNumberStr(StringBuilder numberStr) {
         this.numberStr = numberStr;
+    }
+
+    public void setIndexOperation(Integer indexOperation) {
+        this.indexOperation = indexOperation;
+    }
+
+    public Integer getIndexOperation() {
+        return indexOperation;
+    }
+
+    public Integer getLastIndexOperation() {
+        return lastIndexOperation;
+    }
+
+    public void setLastIndexOperation(Integer lastIndexOperation) {
+        this.lastIndexOperation = lastIndexOperation;
     }
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.lbr.calculadora.com.lbr.calculadora.model.Model;
 import com.lbr.calculadora.com.lbr.calculadora.utils.CalculateUtils;
 
 import java.util.regex.Matcher;
@@ -34,6 +35,12 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.btn_result:
                     final TextView txtResult = findViewById(R.id.txtResult);
                     txtResult.setText(calculate());
+                    break;
+                case R.id.btn_elevate:
+                    concatExpression("^");
+                    break;
+                case R.id.btn_clean:
+                    clean();
                     break;
                 default:
                     concatExpression(btn.getText());
@@ -64,11 +71,24 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_cosine).setOnClickListener(calculateOnClickListener);
         findViewById(R.id.btn_tangent).setOnClickListener(calculateOnClickListener);
         findViewById(R.id.btn_result).setOnClickListener(calculateOnClickListener);
+        findViewById(R.id.btn_send).setOnClickListener(calculateOnClickListener);
+        findViewById(R.id.btn_negate).setOnClickListener(calculateOnClickListener);
+        findViewById(R.id.btn_clean).setOnClickListener(calculateOnClickListener);
+        findViewById(R.id.btn_square_root).setOnClickListener(calculateOnClickListener);
     }
 
     private void concatExpression(CharSequence numberOrOperation){
         final TextView txtExpression = findViewById(R.id.txtExpression);
-        txtExpression.setText(txtExpression.getText().toString().concat(numberOrOperation.toString()));
+
+        if(!isNumberAddOperationFormat(numberOrOperation)){
+            txtExpression.setText(txtExpression.getText().toString().concat(numberOrOperation.toString()));
+        }else{
+            StringBuilder expression = new StringBuilder(txtExpression.getText().toString().concat(numberOrOperation.toString()));
+            Model number = CalculateUtils.findFirstNumber(new StringBuilder(expression), numberOrOperation.toString());
+            expression.delete(number.getIndex(), number.getLastIndexOperation());
+            expression.insert(number.getIndex(), numberOrOperation.toString().concat(number.getNumberStr().toString()));
+            txtExpression.setText(expression);
+        }
     }
 
     private StringBuilder calculate(){
@@ -76,9 +96,37 @@ public class MainActivity extends AppCompatActivity {
         final TextView txtExpression = findViewById(R.id.txtExpression);
         StringBuilder expression = new StringBuilder(txtExpression.getText());
 
-        //Multiplication
-        Pattern pattern = Pattern.compile("\\*");
+        //Cosine
+        Pattern pattern = Pattern.compile(CalculateUtils.COSINE);
         Matcher matcher = pattern.matcher(expression);
+        while (matcher.find()){
+            expression = c.manipulateExpressionOperationBeforeNumber(expression, CalculateUtils.COSINE);
+        }
+
+        //Sine
+        pattern = Pattern.compile(CalculateUtils.SINE);
+        matcher = pattern.matcher(expression);
+        while (matcher.find()){
+            expression = c.manipulateExpressionOperationBeforeNumber(expression, CalculateUtils.SINE);
+        }
+
+        //Tangent
+        pattern = Pattern.compile(CalculateUtils.TANGENT);
+        matcher = pattern.matcher(expression);
+        while (matcher.find()){
+            expression = c.manipulateExpressionOperationBeforeNumber(expression, CalculateUtils.TANGENT);
+        }
+
+        //Power
+        pattern = Pattern.compile("\\^");
+        matcher = pattern.matcher(expression);
+        while (matcher.find()){
+            expression = c.manipulateExpression(expression, "^");
+        }
+
+        //Multiplication
+        pattern = Pattern.compile("\\*");
+        matcher = pattern.matcher(expression);
         while (matcher.find()){
             expression = c.manipulateExpression(expression, "*");
         }
@@ -104,5 +152,20 @@ public class MainActivity extends AppCompatActivity {
             expression = c.manipulateExpression(expression, "-");
         }
         return expression;
+    }
+
+    public boolean isNumberAddOperationFormat(CharSequence entry){
+        //If pattern not (Number before operation with only one number )
+        if(!(entry.equals(CalculateUtils.COSINE) || entry.equals(CalculateUtils.TANGENT) || entry.equals(CalculateUtils.SINE))){
+            return  false;
+        }
+        return true;
+    }
+
+    public void clean(){
+        final TextView txtExpression = findViewById(R.id.txtExpression);
+        final TextView txtResult = findViewById(R.id.txtResult);
+        txtExpression.setText(null);
+        txtResult.setText(null);
     }
 }
