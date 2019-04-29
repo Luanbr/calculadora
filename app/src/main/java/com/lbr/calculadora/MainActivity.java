@@ -3,6 +3,7 @@ package com.lbr.calculadora;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         //Register button listener
         registerBtnListener();
 
+        Log.i("OnCreate", calculate().toString());
     }
 
     private View.OnClickListener calculateOnClickListener = new View.OnClickListener(){
@@ -183,5 +185,41 @@ public class MainActivity extends AppCompatActivity {
 
         it.putExtras(params);
         startActivity(it);
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i("OnStart", calculate().toString());
+        super.onStart();
+    }
+
+    @Override
+    protected void onRestart() {
+        Log.i("onRestart", calculate().toString());
+        super.onRestart();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.i("onResume", calculate().toString());
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.i("onPause", calculate().toString());
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.i("onStop", calculate().toString());
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i("onDestroy", calculate().toString());
+        super.onDestroy();
     }
 }
