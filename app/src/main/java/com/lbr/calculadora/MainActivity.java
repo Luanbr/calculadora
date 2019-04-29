@@ -1,5 +1,6 @@
 package com.lbr.calculadora;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -41,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.btn_clean:
                     clean();
+                    break;
+                case R.id.btn_send:
+                    send();
                     break;
                 default:
                     concatExpression(btn.getText());
@@ -167,5 +171,17 @@ public class MainActivity extends AppCompatActivity {
         final TextView txtResult = findViewById(R.id.txtResult);
         txtExpression.setText(null);
         txtResult.setText(null);
+    }
+
+    public void send(){
+        final TextView txtExpression = findViewById(R.id.txtExpression);
+        final TextView txtResult = findViewById(R.id.txtResult);
+        Intent it = new Intent(this, ActivitySecundary.class);
+        Bundle params = new Bundle();
+        params.putString("expression", txtExpression.getText().toString());
+        params.putString("result", txtResult.getText().toString());
+
+        it.putExtras(params);
+        startActivity(it);
     }
 }
